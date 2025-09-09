@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+// Function to encrypt a message using monoalphabetic substitution
+void encrypt(char plaintext[], char substitution_key[]) {
+    int i;
+    for (i = 0; plaintext[i] != '\0'; i++) {
+        if (isalpha(plaintext[i])) {
+            char base = islower(plaintext[i]) ? 'a' : 'A';
+            int index = plaintext[i] - base;
+            plaintext[i] = islower(plaintext[i]) ? tolower(substitution_key[index]) : toupper(substitution_key[index]);
+        }
+    }
+}
+
+// Function to decrypt a message using monoalphabetic substitution
+void decrypt(char ciphertext[], char substitution_key[]) {
+    char reverse_key[26];
+    int i;
+
+    // Create the reverse mapping
+    for (i = 0; i < 26; i++) {
+        reverse_key[toupper(substitution_key[i]) - 'A'] = (char)('A' + i);
+    }
+
+    for (i = 0; ciphertext[i] != '\0'; i++) {
+        if (isalpha(ciphertext[i])) {
+            char base = islower(ciphertext[i]) ? 'a' : 'A';
+            int index = toupper(ciphertext[i]) - 'A';
+            ciphertext[i] = islower(ciphertext[i]) ? tolower(reverse_key[index]) : reverse_key[index];
+        }
+    }
+}
+
+int main() {
+    char plaintext[100];
+    char ciphertext[100];
+    char substitution_key[27] = "QWERTYUIOPASDFGHJKLZXCVBNM"; // Example key (permutation of alphabet)
+
+    printf("Enter plaintext: ");
+    fgets(plaintext, sizeof(plaintext), stdin);
+    plaintext[strcspn(plaintext, "\n")] = 0; // Remove newline character
+
+    strcpy(ciphertext, plaintext); // Copy plaintext to ciphertext for encryption
+
+    encrypt(ciphertext, substitution_key);
+    printf("Encrypted text: %s\n", ciphertext);
+
+    decrypt(ciphertext, substitution_key); // Decrypt the ciphertext
+    printf("Decrypted text: %s\n", ciphertext);
+
+    return 0;
+}
+
+output
+Enter plaintext: hiiiiiiiiiiiiiiii
+Encrypted text: ioooooooooooooooo
+Decrypted text: hiiiiiiiiiiiiiiii
